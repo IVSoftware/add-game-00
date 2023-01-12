@@ -91,7 +91,7 @@ If the `AddGameForm` returns `DialogResult.OK` it means it holds a valid game fo
                 {
                     Game game = addGame.GetGame();
                     // Use the info given via textboxes and add them to items/subitems
-                    ListViewItem lvi = new ListViewItem(game.Players);
+                    ListViewItem lvi = new ListViewItem(game.Play0Name);
                     lvi.SubItems.Add(game.Players);
                     lvi.SubItems.Add(game.Sequence1);
                     lvi.SubItems.Add(game.Sequence2);

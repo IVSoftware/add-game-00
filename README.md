@@ -1,4 +1,4 @@
-When you're ready to take your game to the next level, your code could be improved by keeping each form's UI controls private and using properties to access the values. The thing is, we really don't _want_ the add game form to have access to the main form's list view. Here's one way to streamline the design in three easy steps.
+When you're ready to take your game to the next level, your code could be improved by keeping each form's UI controls private and using properties and methods to access the values between forms. The thing is, we really don't _want_ the AddGame form to have access to the main form's list view. Here's one way to streamline the design in three easy steps.
 
 ***
 **Make a class to represent a Game (that will become a ListViewItem)**
@@ -17,7 +17,7 @@ When you're ready to take your game to the next level, your code could be improv
 ***
 **Add Game**
 
-When you show the Add Game dialog its purpose is to populate a game. Once the user supplies enough information that the new game is valid then enable the [OK] button.
+When you show the Add Game dialog its purpose is to populate the Game class. Once the user supplies enough information that the new game is valid then enable the [OK] button.
 
 [![add-game][1]][1]
 
@@ -29,6 +29,7 @@ When you show the Add Game dialog its purpose is to populate a game. Once the us
             StartPosition = FormStartPosition.Manual;
             buttonOK.Enabled = false; // Will be enabled when all the texboxes have values
             buttonOK.Click += (sender, e) =>DialogResult = DialogResult.OK;
+            // Make an array of the textboxes.
             _textboxes = 
                 Controls
                 .Cast<Control>()
@@ -37,21 +38,14 @@ When you show the Add Game dialog its purpose is to populate a game. Once the us
                 .ToArray();
             foreach (var textbox in _textboxes) textbox.TextChanged += onAnyTextChanged;
         }
+        // Determine if the game is valid by looking through all the textboxes.
         private void onAnyTextChanged(object? sender, EventArgs e)
         {
             buttonOK.Enabled = !_textboxes.Any(_=>string.IsNullOrWhiteSpace(_.Text));
         }
         private TextBox[] _textboxes;
-        protected override void OnVisibleChanged(EventArgs e)
-        {
-            base.OnVisibleChanged(e);
-            if(Visible && Owner != null) 
-            {
-                Location = new Point(
-                    x: Owner.Location.X + Owner.Width + 10,
-                    y: Owner.Location.Y);
-            }
-        }
+        // If this dialog returns [OK] then the main form 
+        // can retrieve the valid game using this method.
         public Game GetGame()
         {
             Game game = new Game
@@ -65,8 +59,18 @@ When you show the Add Game dialog its purpose is to populate a game. Once the us
             };
             return game;
         }
+        // Position the form relative to the main form when shown.
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            if(Visible && Owner != null) 
+            {
+                Location = new Point(
+                    x: Owner.Location.X + Owner.Width + 10,
+                    y: Owner.Location.Y);
+            }
+        }
     }
-
 ***
 **Retrieve valid Game**
 
